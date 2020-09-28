@@ -489,51 +489,6 @@ In the next section, you can choose to use your current network settings (DHCP) 
 }
 
 # We need to make sure there is enough space before installing, so there is a function to check this
-verifyFreeDiskSpace() {
-    # 50MB is the minimum space needed (45MB install (includes web admin bootstrap/jquery libraries etc) + 5MB one day of logs.)
-    # - Fourdee: Local ensures the variable is only created, and accessible within this function/void. Generally considered a "good" coding practice for non-global variables.
-    local str="Disk space check"
-    # Required space in KB
-    local required_free_kilobytes=51200
-    # Calculate existing free space on this machine
-    local existing_free_kilobytes
-    existing_free_kilobytes=$(df -Pk | grep -m1 '\/$' | awk '{print $4}')
-
-    # If the existing space is not an integer,
-    if ! [[ "${existing_free_kilobytes}" =~ ^([0-9])+$ ]]; then
-        # show an error that we can't determine the free space
-        echo -e "  ${CROSS} ${str}"
-        echo -e "  ${INFO} Unknown free disk space!"
-        echo -e "  ${INFO} We were unable to determine available free disk space on this system."
-        echo -e "  ${INFO} You may override this check, however, it is not recommended"
-        echo -e "  ${INFO} The option '${COL_LIGHT_RED}--i_do_not_follow_recommendations${COL_NC}' can override this"
-        echo -e "  ${INFO} e.g: curl -L https://install.pi-hole.net | bash /dev/stdin ${COL_LIGHT_RED}<option>${COL_NC}"
-        # exit with an error code
-        exit 1
-    # If there is insufficient free disk space,
-    elif [[ "${existing_free_kilobytes}" -lt "${required_free_kilobytes}" ]]; then
-        # show an error message
-        echo -e "  ${CROSS} ${str}"
-        echo -e "  ${INFO} Your system disk appears to only have ${existing_free_kilobytes} KB free"
-        echo -e "  ${INFO} It is recommended to have a minimum of ${required_free_kilobytes} KB to run the Pi-hole"
-        # if the vcgencmd command exists,
-        if command -v vcgencmd &> /dev/null; then
-            # it's probably a Raspbian install, so show a message about expanding the filesystem
-            echo -e "  ${INFO} If this is a new install you may need to expand your disk"
-            echo -e "  ${INFO} Run 'sudo raspi-config', and choose the 'expand file system' option"
-            echo -e "  ${INFO} After rebooting, run this installation again"
-            echo -e "  ${INFO} e.g: curl -L https://install.pi-hole.net | bash"
-        fi
-        # Show there is not enough free space
-        echo -e "\\n      ${COL_LIGHT_RED}Insufficient free space, exiting...${COL_NC}"
-        # and exit with an error
-        exit 1
-    # Otherwise,
-    else
-        # Show that we're running a disk space check
-        echo -e "  ${TICK} ${str}"
-    fi
-}
 
 # A function that let's the user pick an interface to use with Pi-hole
 chooseInterface() {
