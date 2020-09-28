@@ -2311,11 +2311,7 @@ main() {
 
     # Start the installer
     # Verify there is enough disk space for the install
-    if [[ "${skipSpaceCheck}" == true ]]; then
-        echo -e "  ${INFO} Skipping free disk space verification"
-    else
-        verifyFreeDiskSpace
-    fi
+
 
     # Update package cache
     update_package_cache || exit 1
